@@ -12,10 +12,10 @@ namespace API.Controllers
     public class AccountController(AppDbContext context) : BaseApiController
     {
        [HttpPost("register")]
-       
        public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
        {
-       
+        if(await EmailExists(registerDto.Email)) return BadRequest("Email is already taken");
+
             using var hmac = new HMACSHA512();
 
             var user = new AppUser
@@ -30,5 +30,12 @@ namespace API.Controllers
 
             return user;
        }
+
+       private async Task<bool> EmailExists(string email)
+       {
+            return await context.Users.AnyAsync(x => x.Email.ToLower() == email.ToLower());
+       }
+
+
     }
 }
