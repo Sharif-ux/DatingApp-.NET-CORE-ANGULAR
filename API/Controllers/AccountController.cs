@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using API.Interfaces;
 using API.DTOs;
+using API.Extensions;
 
 namespace API.Controllers
 {
@@ -29,13 +30,8 @@ namespace API.Controllers
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            return new UserDto
-            {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                Email = user.Email,
-                Token = tokenService.CreateToken(user)
-            };
+            return user.ToDto(tokenService);
+
     }
 
        [HttpPost("login")]
@@ -56,13 +52,7 @@ namespace API.Controllers
                     return Unauthorized("Invalid password");
             }
 
-            return new UserDto
-            {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                Email = user.Email,
-                Token = tokenService.CreateToken(user)
-            };
+            return user.ToDto(tokenService);
          }
 
        private async Task<bool> EmailExists(string email)
