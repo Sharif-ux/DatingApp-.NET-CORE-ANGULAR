@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using API.Entities;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,7 +16,8 @@ namespace API.Controllers
             var members = await context.Users.ToListAsync();
             return members;
         }
-    [HttpGet("{id}")]//localhost:5000/api/members/bob-id
+        [Authorize]
+        [HttpGet("{id}")]//localhost:5000/api/members/bob-id
         public async Task<ActionResult<AppUser>> GetMember(string id)
         {
             var member = await context.Users.FindAsync(id);
